@@ -1,0 +1,174 @@
+# Instructions
+
+During you interaction with the user, if you find anything reusable in this project (e.g. version of a library, model name), especially about a fix to a mistake you made or a correction you received, you should take note in the `Lessons` section in the `.cursorrules` file so you will not make the same mistake again. 
+
+You should also use the `.cursorrules` file as a scratchpad to organize your thoughts. Especially when you receive a new task, you should first review the content of the scratchpad, clear old different task if necessary, first explain the task, and plan the steps you need to take to complete the task. You can use todo markers to indicate the progress, e.g.
+[X] Task 1
+[ ] Task 2
+Also update the progress of the task in the Scratchpad when you finish a subtask.
+Especially when you finished a milestone, it will help to improve your depth of task accomplishment to use the scratchpad to reflect and plan.
+The goal is to help you maintain a big picture as well as the progress of the task. Always refer to the Scratchpad when you plan the next step.
+
+# Tools
+
+Note all the tools are in python. So in the case you need to do batch processing, you can always consult the python files and write your own script.
+
+## LLM
+
+You always have an LLM at your side to help you with the task. For simple tasks, you could invoke the LLM by running the following command:
+```
+~/anaconda3/envs/py310/bin/python /home/yy/devin/tools/llm_api.py --prompt "What is the capital of France?"
+```
+
+But usually it's a better idea to check the content of the file and use the APIs in the `tools/llm_api.py` file to invoke the LLM if needed.
+
+## Web browser
+
+You could use the `tools/web_scraper.py` file to scrape the web.
+```
+~/anaconda3/envs/py310/bin/python /home/yy/devin/tools/web_scraper.py --max-concurrent 3 URL1 URL2 URL3
+```
+This will output the content of the web pages.
+
+## Search engine
+
+You could use the `tools/search_engine.py` file to search the web.
+```
+~/anaconda3/envs/py310/bin/python /home/yy/devin/tools/search_engine.py "your search keywords"
+```
+This will output the search results in the following format:
+```
+URL: https://example.com
+Title: This is the title of the search result
+Snippet: This is a snippet of the search result
+```
+If needed, you can further use the `web_scraper.py` file to scrape the web page content.
+
+## user guide
+先小版本迭代，每一个小版本都测试，确保每个小版本都能运行。
+测试成功之后，最后再写文档。
+你现在使用的python是：~/anaconda3/envs/py310/bin/python
+最好有清晰的进度显示。
+
+# Scratchpad
+
+## Current Task: 添加Category支持功能 ✅ 完成
+**任务描述**: 在现有的Obsidian导出脚本基础上，增加按"Category"进行操作的功能，与现有的"Tag"功能并行。
+
+**新功能需求**:
+[X] 添加Category前缀配置：`> Category:`
+[X] 修改元数据提取函数，支持Tag和Category两种类型
+[X] 实现用户交互选择（Tag模式 vs Category模式）
+[X] 统一函数接口，使其支持两种元数据类型
+[X] 更新所有相关函数以支持metadata_type参数
+[X] 修改输出文件命名，区分Tag和Category生成的文件
+[X] 更新UI文本，明确显示当前处理的元数据类型
+
+**已完成功能**:
+- ✅ 配置文件添加CATEGORY_PREFIX = "> Category:"
+- ✅ extract_metadata_from_file函数支持两种类型
+- ✅ 主程序添加模式选择交互
+- ✅ 所有章节处理函数支持metadata_type参数
+- ✅ 输出文件自动添加类型标识后缀
+- ✅ 界面文本动态显示当前处理类型
+
+**技术实现要点**:
+- 重命名函数：extract_tags_from_file → extract_metadata_from_file
+- 重命名函数：parse_tag_hierarchy → parse_hierarchy
+- 重命名函数：collect_all_tags → collect_all_metadata
+- 添加metadata_type参数到所有相关函数
+- 更新JSON索引文件命名：chapter_index_{metadata_type}.json
+- 更新EPUB文件命名：Obsidian_{metadata_type}_xxx.epub
+
+## Previous Task: 自动层级目录生成优化 ✅ 已完成
+**任务描述**: 优化现有的Obsidian导出脚本，实现自动的标签统计和层级目录生成，不再需要手动维护标签排序列表。
+
+**最终成果**:
+- ✅ 成功处理4811个markdown文件
+- ✅ 自动识别206个不同标签并按层级排序
+- ✅ 按12个一级目录分别生成EPUB文件
+- ✅ 总计生成181.78MB的EPUB内容
+- ✅ 完全避免了超时问题
+- ✅ 保存了完整的章节索引文件
+- ✅ 创建高效EPUB合并脚本，2分钟内完成合并
+- ✅ 合并后压缩36.1%，最终文件116.21MB
+
+**技术实现计划**:
+1. 修改标签收集逻辑，自动统计所有标签
+2. 实现标签层级解析函数
+3. 实现自动排序（自然排序）
+4. 生成目录结构和索引文件
+5. 修改主程序流程，先生成索引再导出
+
+**之前完成的功能**:
+- ✅ 基础文件扫描和标签提取
+- ✅ Pandoc集成和EPUB生成
+- ✅ 30MB EPUB文件成功生成
+
+**技术栈**:
+- Python 3.10 (~/anaconda3/envs/py310/bin/python)
+- pathlib: 文件系统操作
+- subprocess: 调用Pandoc
+- 外部工具: Pandoc
+
+# Lessons
+
+## Pandoc版本升级 (2025-07-23)
+
+**版本升级**: 从pandoc 3.1.8 升级到 pandoc 3.7
+- 通过下载官方deb包的方式进行升级：`wget https://github.com/jgm/pandoc/releases/download/3.7/pandoc-3.7-1-amd64.deb`
+- 使用dpkg安装：`sudo dpkg -i pandoc-3.7-1-amd64.deb`
+- 验证版本：`pandoc --version` 显示为 3.7
+- 新版本特性：Features: +server +lua，Scripting engine: Lua 5.4
+
+**兼容性问题与修复**:
+- 问题：Pandoc 3.7对YAML frontmatter解析更加严格，Obsidian文件使用的非标准格式（`> Author:`, `> Tag:`等）被误认为YAML导致解析错误
+- 解决方案：在pandoc命令中添加`--from=markdown-yaml_metadata_block`参数，禁用YAML frontmatter解析
+- 修复效果：成功生成30.15MB的EPUB文件，包含1548个文档
+
+**技术要点**:
+- 非标准元数据格式与标准YAML frontmatter的冲突
+- Pandoc输入格式参数的正确使用
+- 版本升级时的向后兼容性考虑
+
+## 项目成功完成总结 (2025-01-23)
+
+**项目目标**: 将Obsidian vault中按标签分类的笔记导出为EPUB格式电子书
+
+**最终成果**:
+- ✅ 成功处理4811个markdown文件
+- ✅ 识别并解析206个不同标签  
+- ✅ 按预设顺序筛选出1548个相关文档
+- ✅ 生成30MB的完整EPUB电子书
+
+**技术实现要点**:
+1. 使用pathlib进行文件系统操作，支持递归目录遍历
+2. 正则表达式解析标签格式：`> Tag: #标签内容`
+3. 基于标签优先级的智能排序算法
+4. Pandoc集成实现markdown到EPUB的转换
+5. 完整的错误处理和进度显示
+
+**关键配置**:
+- 标签前缀：`> Tag:`
+- 输出格式：EPUB3，支持中文
+- 资源路径处理：自动处理图片等附件
+- 元数据：包含标题、作者、日期
+
+**可复用模式**:
+- 小版本迭代开发策略
+- 每个版本都经过测试验证
+- 模块化设计便于扩展和维护
+
+## Category支持功能完成 (2025-01-23)
+
+**新增功能**: 在Tag处理基础上，增加Category字段的同样处理能力
+- 支持两种元数据类型：Tag 和 Category
+- 用户可在运行时选择处理模式
+- 输出文件自动区分类型（添加后缀标识）
+- 完全复用现有的层级解析和EPUB生成逻辑
+
+**技术实现**:
+- 函数重构：提取通用元数据处理逻辑
+- 参数化设计：metadata_type参数统一控制处理类型
+- 配置扩展：添加CATEGORY_PREFIX = "> Category:"
+- 文件命名优化：自动添加类型标识避免冲突
